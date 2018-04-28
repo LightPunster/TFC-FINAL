@@ -1,25 +1,5 @@
 #include <Arduino.h>
-//#include <MPU9250_RegisterMap.h>
-//#include <SparkFunMPU9250-DMP.h>
-//#include <MPU9250DMP.h>
 
-
-
-
-/************************************************************
-MPU9250_DMP_Orientation
- Orientation example for MPU-9250 DMP Arduino Library
-Jim Lindblom @ SparkFun Electronics
-original creation date: November 23, 2016
-https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
-Uses the MPU-9250's digital motion processing engine to
-determine orientation of the board.
-Development environment specifics:
-Arduino IDE 1.6.12
-SparkFun 9DoF Razor IMU M0
-Supported Platforms:
-- ATSAMD21 (Arduino Zero, SparkFun SAMD21 Breakouts)
-*************************************************************/
 #include <SparkFunMPU9250-DMP.h>
 
 #define SerialPort SerialUSB
@@ -34,38 +14,8 @@ const signed char orientationMatrix[9] = {
   0, 0, 1
 };
 unsigned char lastOrient = 0;
-
-
-void loop()
-{
-  if ( imu.fifoAvailable() )
-  {
-    imu.dmpUpdateFifo();
-    unsigned char orient = imu.dmpGetOrientation();
-    if (orient != lastOrient)
-    {
-      switch (orient)
-      {
-      case ORIENT_PORTRAIT:
-        SerialPort.println("Portrait");
-        break;
-      case ORIENT_LANDSCAPE:
-        SerialPort.println("Landscape");
-        break;
-      case ORIENT_REVERSE_PORTRAIT:
-        SerialPort.println("Portrait (Reverse)");
-        break;
-      case ORIENT_REVERSE_LANDSCAPE:
-        SerialPort.println("Landscape (Reverse)");
-        break;
-      }
-      lastOrient = orient;
-    }
-  }
-}
-
 /////////////////////////////////////////////////////////////
-/*#include <Wire.h>
+#include <Wire.h>
 #include "quaternionFilters.h"
 #include "MPU9250.h"
 
@@ -325,8 +275,7 @@ void loop() {
       myIMU.sum = 0;
     } // if (myIMU.delt_t > 500)
   } // if (AHRS)
-}*/
-
+}
 
 
     /*imu.update(UPDATE_ACCEL|UPDATE_GYRO); t_sample = micros();
