@@ -157,7 +157,7 @@ char Teensy_BMP180::startTemperature(void)
 }
 
 
-char Teensy_BMP180::getTemperature()
+char Teensy_BMP180::getTemperature(double &T)
 // Retrieve a previously-started temperature reading.
 // Requires begin() to be called once prior to retrieve calibration parameters.
 // Requires startTemperature() to have been called prior and sufficient time elapsed.
@@ -198,7 +198,7 @@ char Teensy_BMP180::getTemperature()
 	// Calculate the temperature
 	tu = (byteHigh << 8) + byteLow;
 	a = c5 * (tu - c6);
-	bmp.temperature = a + (mc / (a + md));
+	T = a + (mc / (a + md));
 
 	// Return true as ok
 	return(1);
@@ -229,7 +229,7 @@ char Teensy_BMP180::startPressure(void)
 }
 
 
-char Teensy_BMP180::getPressure();
+char Teensy_BMP180::getPressure(double &P, double &T)
 // Retrieve a previously started pressure reading, calculate abolute pressure in mbars.
 // Requires begin() to be called once prior to retrieve calibration parameters.
 // Requires startPressure() to have been called prior and sufficient time elapsed.
@@ -277,19 +277,19 @@ char Teensy_BMP180::getPressure();
 	// Calculate absolute pressure in mbars.
 	pu = (byteHigh * 256.0) + byteMid + (byteLow/256.0);
 
-	s = bmp.temperature - 25.0;
+	s = T - 25.0;
 	x = (xx2 * pow(s,2)) + (xx1 * s) + xx0;
 	y = (yy2 * pow(s,2)) + (yy1 * s) + yy0;
 	z = (pu - x) / y;
-	bmp.pressure = (p2 * pow(z,2)) + (p1 * z) + p0;
+	P = (p2 * pow(z,2)) + (p1 * z) + p0;
 
 	return(1);
 }
 
 
-double Teensy_BMP180::altitude()
+double Teensy_BMP180::altitude(double P, double P0)
 // Given a pressure measurement P (mb) and the pressure at a baseline P0 (mb),
 // return altitude (meters) above baseline.
 {
-	return(44330.0*(1-pow(bmp.pressure/bmp.baseline,1/5.255)));
+	return(44330.0*(1-pow(P/P0,1/5.255)));
 }

@@ -6,7 +6,7 @@ int current_command = 0;
 struct bmp_data bmp;
 
 #include <IMU.h>
-MPU9250_DMP imu_sensor;
+//MPU9250_DMP imu_sensor;
 //IMU_data imu;
 
 
@@ -39,11 +39,6 @@ void declarations() {
     //  delay(100);
     //}
 
-    imu_sensor.setSensors(INV_XYZ_GYRO);
-    imu_sensor.setGyroFSR(250);
-    imu_sensor.setAccelFSR(16);
-    imu_sensor.setLPF(5);
-    imu_sensor.setSampleRate(100);
     bmp180.begin();
     bmpSetup();
 

@@ -5,16 +5,16 @@ void bmpSetup()
 {
     //bmp180.begin();
     if(getPressure()){
-      bmp.baseline = bmp.pressure;
+      baseline=bmpValues[1];
     }
 }
 
 
 void bmpData() {
     if(getPressure()){
-      bmp180.altitude();
-      bmp180.getTemperature();
-      bmp180.getPressure();
+      bmp.altitude = bmp180.altitude(bmpValues[1],baseline);
+      bmp.temperature = bmp180.getTemperature(bmpValues[0]);
+      bmp.pressure = bmp180.getPressure(bmpValues[1],bmpValues[0]);
     }
 }
 
@@ -23,7 +23,7 @@ if(IMU_altitude >= IMU_Max_altitude){
   IMU_Max_altitude = IMU_altitude;
 }
 */
-/*
+
 bool getPressure() {
   if (bmp180.startTemperature() != 0)
   {
@@ -40,4 +40,3 @@ bool getPressure() {
   }
   return 0;
 }
-*/

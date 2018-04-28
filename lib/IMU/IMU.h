@@ -3,9 +3,9 @@
 
 #include "Global.h"
 //#include <MPU9250_RegisterMap.h>
-#include <SparkFunMPU9250-DMP.h>
+//#include <MPU9250DMP.h>
 #include <math.h>
-extern MPU9250_DMP imu;
+//extern MPU9250_DMP imu;
 
 void test();
 

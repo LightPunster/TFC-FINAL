@@ -2,7 +2,20 @@
 
 
 void test () {
-    
+    /*imu.update(UPDATE_ACCEL|UPDATE_GYRO); t_sample = micros();
+    float omega_z = imu.calcGyro(imu.gz) + omega_z_BiasCorrection;
+    float theta_z += ((t_sample - t_last)/1000000.0)*(omega_z + omega_z_0)/2;
+    float omega_z_0 = omega_z; t_last = t_sample;
+
+    if(theta_z>(setpoint+180)) theta_z-=360; //Ensures that error never exceed +-180
+    if(theta_z<(setpoint-180)) theta_z+=360;
+
+    float error = setpoint - theta_z;
+    float d_error = -omega_z;
+
+    Serial.print("SP: "); Serial.print(setpoint);
+    Serial.print("\tOmega: "); Serial.print(omega_z);
+    Serial.print("\tAng: "); Serial.print(theta_z);*/
 }
 
 
