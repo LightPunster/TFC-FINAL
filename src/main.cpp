@@ -6,7 +6,7 @@ int current_command = 0;
 struct bmp_data bmp;
 
 #include <IMU.h>
-MPU9250_DMP imu;
+MPU9250_DMP imu_sensor;
 
 
 void declarations();
