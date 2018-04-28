@@ -13,9 +13,12 @@ struct bmp_data bmp;
 //IMU_data imu;
 
 
+void declarations();
+
+
 
 void setup() {
-    // put your setup code here, to run once:
+    declarations();  //found in other
 }
 
 void loop() {
@@ -23,7 +26,31 @@ void loop() {
 }
 
 
+void declarations() {
+    Serial.begin(500000);
 
+    /*pinMode(SD_chipSelect, OUTPUT);
+    if(!SD.begin(SD_chipSelect)) {
+        Serial.println("initialization failed");
+    }
+    sd_setup();*/
+
+    //TFR.begin(500000);    //increase the baud rate, check math
+
+    //while (imu.begin() != INV_SUCCESS) {
+    //  Serial.println("IMU error");
+    //  delay(100);
+    //}
+
+    //imu_sensor.begin();
+    //filter.begin(100);
+    bmp180.begin();
+    bmpSetup();
+
+    pinMode(valve_cw, OUTPUT);
+    pinMode(valve_ccw, OUTPUT);
+    pinMode(valve_dump, OUTPUT);
+}
 
 
 /*
@@ -45,7 +72,6 @@ struct status_set status;
 
 
 void data_log(elapsedMillis current_time, elapsedMillis global_time);
-void declarations();
 void emergency_dump();
 void control();
 void getData();
@@ -53,8 +79,6 @@ void getData();
 
 
 void setup() {
-
-    declarations();  //found in other
     flight_plan();//construct the flight plan before launch
 
 
@@ -119,27 +143,6 @@ void loop() {
 //}
 
 /*
-void declarations() {
-    Serial.begin(500000);
-
-    pinMode(SD_chipSelect, OUTPUT);
-    if(!SD.begin(SD_chipSelect)) {
-        Serial.println("initialization failed");
-    }
-    sd_setup();
-
-    //TFR.begin(500000);    //increase the baud rate, check math
-
-    imu_sensor.begin();
-    filter.begin(100);
-    bmp180.begin();
-    bmpSetup();
-
-    pinMode(valve_cw, OUTPUT);
-    pinMode(valve_ccw, OUTPUT);
-    pinMode(valve_dump, OUTPUT);
-}
-
 
 void emergency_dump() {
     digitalWrite(valve_dump, HIGH);

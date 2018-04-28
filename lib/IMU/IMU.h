@@ -2,6 +2,11 @@
 #define _IMU_H_
 
 #include "Global.h"
+#include <SparkFunMPU9250-DMP.h> //Library for gyroscope
+#include <math.h>
+
+void test();
+
 /*#include <Wire.h>
 #include <EEPROM.h>
 #include <NXPMotionSense.h>

@@ -1,8 +1,5 @@
 
 
-#include <SparkFunMPU9250-DMP.h> //Library for gyroscope
-#include <math.h>
-
 bool tilted = false;
 float omega_z, omega_z_0, theta_z;
 float omega_z_BiasCorrection = -3.45;
@@ -34,10 +31,7 @@ void setup() {
 
   Serial.begin(9600);
 
-  while (imu.begin() != INV_SUCCESS) {
-    Serial.println("IMU error");
-    delay(100);
-  }
+
 
   imu.setSensors(INV_XYZ_GYRO);
   imu.setGyroFSR(250);
