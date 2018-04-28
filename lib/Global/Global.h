@@ -27,8 +27,8 @@ static elapsedMillis T_sinceEmergency;
 //used in the control function
 static elapsedMillis T_sinceControl;
 static elapsedMicros T_sincePulsed;
-static elapsedMicros T_sinceHold;
-static elapsedMicros T_lastTime;
+static elapsedMillis T_sinceHold;
+static elapsedMillis T_lastTime;
 
 
 enum cardinal_direction {

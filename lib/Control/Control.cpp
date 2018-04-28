@@ -2,17 +2,17 @@
 
 
 void control_hold(imu* imu_data) {
-    float derivative_error;
-
-    //Calculate derivative_error from gyroscope reading
+    //float derivative_error;
+    /*//Calculate derivative_error from gyroscope reading
     if(imu_data->error < 0) {
 		derivative_error = -imu_data->omega_Reading;
 	} else {
 		derivative_error = imu_data->omega_Reading;
-	}
+	}*/
+
 
 	//Hold mode, use hold gains
-	float pwm_Duty = ((Kp_hold) * (imu_data->error)) + ((Kd_hold) * (derivative_error)) + ((Ki_hold) * (imu_data->integral_error));
+	pwm_Duty = ((Kp_hold) * (imu_data->error)) + ((Kd_hold) * (imu_data->d_error)) + ((Ki_hold));// * (imu_data->integral_error));
 
 	if(abs(pwm_Duty) < pwm_Limit_hold)
         pwm_Duty = 0; //limit pwm to avoid jitter (probably 5%-20%)
@@ -32,16 +32,16 @@ void control_hold(imu* imu_data) {
 
 
 void control_actuate(imu* imu_data) {
-    float derivative_error;
-
-    if(imu_data->error < 0) {												//Calculate derivative error from gyroscope reading
+    //float derivative_error;
+    /*if(imu_data->error < 0) {												//Calculate derivative error from gyroscope reading
 		derivative_error = -imu_data->omega_Reading;
 	} else {
 		derivative_error = imu_data->omega_Reading;
-	}
+	}*/
+
 
 	//Actuate mode, use actuate gains
-	float pwm_Duty = ((Kp_actuate) * (imu_data->error)) + ((Kd_actuate) * (derivative_error)) + ((Ki_actuate) * (imu_data->integral_error));
+	pwm_Duty = ((Kp_actuate) * (imu_data->error)) + ((Kd_actuate) * (imu_data->d_error));// + ((Ki_actuate)) * (imu_data->integral_error));
 
 	if(abs(pwm_Duty) < pwm_Limit_actuate)
         pwm_Duty = 0;	//limit pwm to avoid jitter (probably 0)

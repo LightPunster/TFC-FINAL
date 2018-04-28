@@ -10,6 +10,17 @@ void bmpSetup()
 }
 
 
+
+void bmp_get_data() {
+
+}
+
+
+
+
+
+
+
 void bmpData() {
     if(getPressure()){
       bmp.altitude = bmp180.altitude(bmpValues[1],baseline);

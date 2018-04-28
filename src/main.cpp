@@ -15,24 +15,88 @@ struct imu imu_data;
 struct status_set status; //the struct holding the status of all systems
 
 #include <Control.h>
+float pwm_Duty;
 
-
-void declarations();
 void control();
-
+void data_log(elapsedMillis current_time, elapsedMillis global_time);
+void declarations();
+void emergency_dump();
+void print_stuff(elapsedMillis current_time, elapsedMillis global_time);
 
 void setup() {
     declarations();  //found in other
+    flight_plan();
+
+    //do these to setup for loop functions after burnout wait period
+    T_sinceControl = 0;
+    T_sincePulsed = Control_period;
+    T_sinceHold = 0;
+    //T_currentTime = 0;
+    T_lastTime = 0;
+    T_sinceApogee = 0;
+    T_sinceFalling = 0;
 }
 
 
 void loop() {
+    bmp_get_data();
     imu_get_data();
+
     control();
-    digitalWrite(valve_cw, !(T_sincePulsed <= (Control_period*cw_pwm_Duty)));
-    digitalWrite(valve_ccw, !(T_sincePulsed <= (Control_period*ccw_pwm_Duty)));
+
+    if(pwm_Duty > 0) {
+        digitalWrite(valve_cw, (T_sincePulsed <= (1000000*pwm_Duty*pwm_period)));
+    } else if(pwm_Duty < 0) {
+        digitalWrite(valve_ccw, (T_sincePulsed <= (-1000000*pwm_Duty*pwm_period)));
+    } else {
+        digitalWrite(valve_cw, LOW);
+        digitalWrite(valve_ccw, LOW);
+    }
+
+    T_sinceEmergency = 0;
+    while(status.emergency) {
+        emergency_dump();
+        data_log(T_sinceEmergency, T_sinceStart);
+    }
+
+    //digitalWrite(valve_cw, !(T_sincePulsed <= (Control_period*cw_pwm_Duty)));
+    //digitalWrite(valve_ccw, !(T_sincePulsed <= (Control_period*ccw_pwm_Duty)));
 }
 
+
+
+//Perform the neccessary control functions:
+//                                       navigate to the desired point or control roll
+//                                       hold current position
+//                                       iterate to the next command when conditions met
+void control() {
+    if (T_sincePulsed >= Control_period) {
+        print_stuff(T_sinceControl, T_sinceStart); //remove this later
+
+        if (imu_data.error <= Allowed_error) {
+            if (T_sinceHold <= commands[current_command].hold_time) { //hold if we have not yet held for the appropriate elength of time
+                control_hold(&imu_data);
+                T_sincePulsed = T_sincePulsed - Control_period;
+            }
+            else { //iterate to the next command and reset the timing variables
+                T_sincePulsed = Control_period;
+                T_sinceHold = 0;
+                current_command++;
+            }
+        }
+        else {  //actuate if the error is greater than the error allowed to satisfy conditions
+            control_actuate(&imu_data);
+            T_sincePulsed = T_sincePulsed - Control_period;
+            T_sinceHold = 0;
+        }
+        T_sinceControl = 0;
+    }
+}
+
+
+void data_log(elapsedMillis current_time, elapsedMillis global_time) {
+
+}
 
 void declarations() {
     Serial.begin(2000000); //the fastest "safest" baud rate Teensy 3.6 can handle according to documentation
@@ -56,30 +120,106 @@ void declarations() {
 }
 
 
-//Perform the neccessary control functions:
-//                                       navigate to the desired point or control roll
-//                                       hold current position
-//                                       iterate to the next command when conditions met
-void control() {
-    if (T_sincePulsed >= Control_period) {
-        if (imu.error <= Allowed_error) {
-            if (T_sinceHold <= commands[current_command].hold_time) { //hold if we have not yet held for the appropriate elength of time
-                control_hold(&imu_data);
-                T_sincePulsed = T_sincePulsed - Control_period;
-            }
-            else { //iterate to the next command and reset the timing variables
-                T_sincePulsed = Control_period;
-                T_sinceHold = 0;
-                current_command++;
-            }
-        }
-        else {  //actuate if the error is greater than the error allowed to satisfy conditions
-            control_actuate(&imu_data);
-            T_sincePulsed = T_sincePulsed - Control_period;
-            T_sinceHold = 0;
-        }
-    }
+void emergency_dump() {
+    digitalWrite(valve_dump, HIGH);
 }
+
+
+void print_stuff(elapsedMillis current_time, elapsedMillis global_time) {
+    Serial.print("GLOBAL TIME: ");
+    Serial.print(((global_time)/1000), DEC);
+    Serial.print("\tCURRENT TIME: ");
+    Serial.println(((current_time)/1000), DEC);
+    //Serial.println("");
+
+
+    Serial.print("SETPOINT: ");
+    Serial.println(commands[current_command].setpoint);
+    //Serial.print("\tLAST_SETPOINT: ");
+    //Serial.println(imu.last_setpoint);
+
+    Serial.print("HOLDTIME: ");
+    Serial.print((commands[current_command].hold_time)/1000);
+    Serial.print("\tROLL_DIRECTION: ");
+    if(commands[current_command].roll_direction == 1) {
+        Serial.println("CLOCKWISE");
+    } else {
+        Serial.println("COUNTERCLOCKWISE");
+    }
+
+    Serial.print("UPDATES: ");
+    if(commands[current_command].is_done) {
+        Serial.println("OBJECTIVE COMPLETE");
+    } else if(status.active_valves) {
+        Serial.println("ACTIVE VALVES");
+    } else {
+        Serial.println("");
+    }
+
+    Serial.println("IMU DATA");
+    Serial.print("\tAcceleraton: ");
+    Serial.print(imu_data.aSqrt);
+    Serial.print("\t\tmDirection: ");
+    Serial.println(imu_data.mDirection);
+
+    Serial.print("\taX: ");
+    Serial.print(imu_data.aX);
+    Serial.print("\taZ: ");
+    Serial.print(imu_data.aZ);
+    Serial.print("\taY: ");
+    Serial.println(imu_data.aY);
+
+    //Serial.print("\t\tVELOCITY: ");
+    //Serial.println(imu.IMU_velocity);
+
+    Serial.print("\tgX: ");
+    Serial.print(imu_data.gX);
+    Serial.print("\t\tgY: ");
+    Serial.print(imu_data.gY);
+    Serial.print("\t\tgZ: ");
+    Serial.println(imu_data.gZ);
+
+    Serial.print("\tmX: ");
+    Serial.print(imu_data.mX);
+    Serial.print("\t\tmY: ");
+    Serial.print(imu_data.mY);
+    Serial.print("\t\tmZ: ");
+    Serial.println(imu_data.mZ);
+
+    Serial.print("\tERROR: ");
+    Serial.print(imu_data.error);
+    Serial.print("\t\tD_Error: ");
+    Serial.println(imu_data.d_error);
+
+    Serial.print("\tOMEGA_Z: ");
+    Serial.print(imu_data.omega_z);
+    Serial.print("\t\tOMEGA_Z_0: ");
+    Serial.println(imu_data.omega_z_0);
+
+    Serial.print("\tD_ERROR: ");
+    Serial.print(imu_data.d_error);
+    //Serial.print("\t\tINST AVG ERROR");
+    //Serial.println(imu_data.);
+
+    Serial.print("\t\tTHIS TIME: ");
+    Serial.print(imu_data.this_time*.001);
+    Serial.print("\t\tLAST TIME: ");
+    Serial.println(imu_data.last_time*.001);
+
+    /*Serial.println("BMP DATA");
+    Serial.print("\t\tALTITUDE: ");
+    Serial.print(bmp.altitude);
+    Serial.print("\t\tMAX ALTITUDE");
+    Serial.println(bmp.max_altitude);
+
+    Serial.print("\t\tPRESSURE: ");
+    Serial.print(bmp.pressure);
+    Serial.print("\t\tTEMPERATURE: ");
+    Serial.println(bmp.temperature);*/
+
+}
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -99,12 +239,6 @@ File myFile;
 struct status_set status;
 
 //SoftwareSerial TFR(7, 8);  //serial to TFR
-
-
-void data_log(elapsedMillis current_time, elapsedMillis global_time);
-void emergency_dump();
-void control();
-void getData();
 
 
 
@@ -133,22 +267,11 @@ void setup() {
     while(T_sinceBurnout < wait_time) {
         data_log(T_sinceBurnout, T_sinceStart);
     }
-
-
-    //do these to setup for loop functions after burnout wait period
-    T_sinceControl = 0;
-    T_sincePulsed = Control_period;
-    T_sinceHold = 0;
-    //T_currentTime = 0;
-    T_lastTime = 0;
-    T_sinceApogee = 0;
-    T_sinceFalling = 0;
 }
 
 
 
 void loop() {
-    bmpData();
 
     if((!status.apogee) && (!status.falling)) {
         status_apogee(T_sinceApogee);
@@ -158,25 +281,9 @@ void loop() {
         emergency_dump();
         data_log(T_sinceApogee, T_sinceStart);
     }
-
-    /*T_sinceEmergency = 0;
-    while(status.emergency) {
-        emergency_dump();
-        data_log(T_sinceEmergency, T_sinceStart);
-    }*/
 //}
 
 /*
-
-void emergency_dump() {
-    digitalWrite(valve_dump, HIGH);
-}
-
-
-void getData() {
-    imuData();
-    bmpData();
-}
 
 
 void data_log(elapsedMillis current_time, elapsedMillis global_time) {

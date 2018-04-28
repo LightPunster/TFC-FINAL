@@ -66,6 +66,13 @@ void flight_plan() {
     commands[current_command].roll_direction = 0;
     commands[current_command].is_done = 0;
 
+    //hold at North for four seconds
+    current_command = 2;
+    commands[current_command].setpoint = North;
+    commands[current_command].hold_time = 4000000;
+    commands[current_command].roll_direction = 0;
+    commands[current_command].is_done = 0;
+
 
     /*
     //

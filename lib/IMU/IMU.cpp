@@ -23,6 +23,7 @@ void imu_get_data() {
     imu_data.theta_z += ((imu_data.this_time - imu_data.last_time)/1000000.0) * (imu_data.omega_z + imu_data.omega_z_0)/2;
     imu_data.omega_z_0 = imu_data.omega_z;
     imu_data.last_time = imu_data.this_time;
+    imu_data.this_time = T_sinceStart;
 
     if(imu_data.theta_z>(commands[current_command].setpoint+180)) imu_data.theta_z-=360; //Ensures that error never exceed +-180
     if(imu_data.theta_z<(commands[current_command].setpoint-180)) imu_data.theta_z+=360;

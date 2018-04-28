@@ -17,6 +17,8 @@ struct bmp_data {
 };
 extern struct bmp_data bmp;
 
+void bmp_get_data();
+
 
 void bmpSetup();
 void bmpData();
