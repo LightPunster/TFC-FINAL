@@ -4,7 +4,7 @@
 #include "Global.h"
 #include "IMU.h"
 
-/*
+
 //declarations for control used in main loop
 #define Allowed_error 0.2
 //control period is two seconds
@@ -24,7 +24,7 @@
 
 
 //controls the rocket by performing algorithmic calculations and sending a signal to the solenoids
-void control_hold(IMU_data* data);
-void control_actuate(IMU_data* data);
-*/
+void control_hold(imu* imu_data);
+void control_actuate(imu* imu_data);
+
 #endif

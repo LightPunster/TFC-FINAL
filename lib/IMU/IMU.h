@@ -24,10 +24,33 @@ struct imu {
     float mX;
     float mY;
     float mZ;
+
+    float omega_z;
+    float omega_z_0;
+    float theta_z;
+    //float IMU_acceleration;
+    //float IMU_velocity;
+
+    //float direction_setpoint;
+    //float last_setpoint;
+
+    float error;
+    //float last_error;
+    //float integral_error;
+    //float omega_Reading;
+    float d_error;
+    //float inst_avg_error;
+    int this_time;
+    int last_time;
 };
 extern struct imu imu_data;
 
 void imu_sensor_setup();
+void imu_get_data();
+
+#define omega_z_BiasCorrection -3.45;
+
+
 
 /*#include <Wire.h>
 #include <EEPROM.h>

@@ -5,8 +5,42 @@
 void serialPrint(elapsedMillis current_time, elapsedMillis global_time) {
 
 
-    
+
 }
+
+/*Serial.println("sensorId: " + String(sensorId));
+
+imu_sensor.accelUpdate();
+imu_data.aX = imu_sensor.accelX();
+imu_data.aY = imu_sensor.accelY();
+imu_data.aZ = imu_sensor.accelZ();
+imu_data.aSqrt = imu_sensor.accelSqrt();
+Serial.println("accelX: " + String(imu_data.aX));
+Serial.println("accelY: " + String(imu_data.aY));
+Serial.println("accelZ: " + String(imu_data.aZ));
+Serial.println("accelSqrt: " + String(imu_data.aSqrt));
+
+imu_sensor.gyroUpdate();
+imu_data.gX = imu_sensor.gyroX();
+imu_data.gY = imu_sensor.gyroY();
+imu_data.gZ = imu_sensor.gyroZ();
+Serial.println("gyroX: " + String(imu_data.gX));
+Serial.println("gyroY: " + String(imu_data.gY));
+Serial.println("gyroZ: " + String(imu_data.gZ));
+
+imu_sensor.magUpdate();
+imu_data.mX = imu_sensor.magX();
+imu_data.mY = imu_sensor.magY();
+imu_data.mZ = imu_sensor.magZ();
+imu_data.mDirection = imu_sensor.magHorizDirection();
+Serial.println("magX: " + String(imu_data.mX));
+Serial.println("maxY: " + String(imu_data.mY));
+Serial.println("magZ: " + String(imu_data.mZ));
+Serial.println("horizontal direction: " + String(imu_data.mDirection));
+
+Serial.println("at " + String(millis()) + "ms");
+Serial.println(""); // Add an empty line
+delay(500);*/
 /*
     Serial.print("STATUS: ");
     int temp2 = ((status.TFC_1_connected) + (status.TFC_2_connected*2) + (status.TFC_3_connected*4));

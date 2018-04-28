@@ -11,8 +11,14 @@ struct imu imu_data;
 
 #include <Serial.h>
 
-void declarations();
+#include <Status.h>
+struct status_set status; //the struct holding the status of all systems
 
+#include <Control.h>
+
+
+void declarations();
+void control();
 
 
 void setup() {
@@ -21,7 +27,10 @@ void setup() {
 
 
 void loop() {
-
+    imu_get_data();
+    control();
+    digitalWrite(valve_cw, !(T_sincePulsed <= (Control_period*cw_pwm_Duty)));
+    digitalWrite(valve_ccw, !(T_sincePulsed <= (Control_period*ccw_pwm_Duty)));
 }
 
 
@@ -36,7 +45,7 @@ void declarations() {
 
     //TFR.begin(2000000);    //increase the baud rate, check math
 
-
+    imu_sensor_setup();
 
     bmp180.begin();
     bmpSetup();
@@ -46,6 +55,33 @@ void declarations() {
     pinMode(valve_dump, OUTPUT);
 }
 
+
+//Perform the neccessary control functions:
+//                                       navigate to the desired point or control roll
+//                                       hold current position
+//                                       iterate to the next command when conditions met
+void control() {
+    if (T_sincePulsed >= Control_period) {
+        if (imu.error <= Allowed_error) {
+            if (T_sinceHold <= commands[current_command].hold_time) { //hold if we have not yet held for the appropriate elength of time
+                control_hold(&imu_data);
+                T_sincePulsed = T_sincePulsed - Control_period;
+            }
+            else { //iterate to the next command and reset the timing variables
+                T_sincePulsed = Control_period;
+                T_sinceHold = 0;
+                current_command++;
+            }
+        }
+        else {  //actuate if the error is greater than the error allowed to satisfy conditions
+            control_actuate(&imu_data);
+            T_sincePulsed = T_sincePulsed - Control_period;
+            T_sinceHold = 0;
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include <Control.h>
@@ -112,15 +148,9 @@ void setup() {
 
 
 void loop() {
-
-    imuData();
     bmpData();
 
     if((!status.apogee) && (!status.falling)) {
-        control();
-        digitalWrite(valve_cw, !(T_sincePulsed <= (Control_period*cw_pwm_Duty)));
-        digitalWrite(valve_ccw, !(T_sincePulsed <= (Control_period*ccw_pwm_Duty)));
-
         status_apogee(T_sinceApogee);
         status_falling(T_sinceFalling);
         data_log(T_sinceControl, T_sinceStart);
@@ -140,32 +170,6 @@ void loop() {
 
 void emergency_dump() {
     digitalWrite(valve_dump, HIGH);
-}
-
-
-//Perform the neccessary control functions:
-//                                       navigate to the desired point or control roll
-//                                       hold current position
-//                                       iterate to the next command when conditions met
-void control() {
-    if (T_sincePulsed >= Control_period) {
-        if (imu.error <= Allowed_error) {
-            if (T_sinceHold <= commands[current_command].hold_time) { //hold if we have not yet held for the appropriate elength of time
-                control_hold(&imu);
-                T_sincePulsed = T_sincePulsed - Control_period;
-            }
-            else { //iterate to the next command and reset the timing variables
-                T_sincePulsed = Control_period;
-                T_sinceHold = 0;
-                current_command++;
-            }
-        }
-        else {  //actuate if the error is greater than the error allowed to satisfy conditions
-            control_actuate(&imu);
-            T_sincePulsed = T_sincePulsed - Control_period;
-            T_sinceHold = 0;
-        }
-    }
 }
 
 

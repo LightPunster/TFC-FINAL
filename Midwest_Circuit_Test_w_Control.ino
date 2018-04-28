@@ -1,8 +1,6 @@
 
 
 bool tilted = false;
-float omega_z, omega_z_0, theta_z;
-float omega_z_BiasCorrection = -3.45;
 long int t_sample, t_last;
 
 float error, d_error;
@@ -28,30 +26,15 @@ void setup() {
   digitalWrite(dump_pin,LOW);
 
   Serial.begin(9600);
-   
+
   t_last = micros(); omega_z = 0; theta_z = 0;
   startTime = micros();
   duty = 0;
 }
 
 void loop() {
-  //Calculate angular displacement and control error
-  imu.update(UPDATE_ACCEL|UPDATE_GYRO); t_sample = micros();
-  omega_z = imu.calcGyro(imu.gz) + omega_z_BiasCorrection;
-  theta_z += ((t_sample - t_last)/1000000.0)*(omega_z + omega_z_0)/2;
-  omega_z_0 = omega_z; t_last = t_sample;
-
-  if(theta_z>(setpoint+180)) theta_z-=360; //Ensures that error never exceed +-180
-  if(theta_z<(setpoint-180)) theta_z+=360;
-
   error = setpoint - theta_z;
   d_error = -omega_z;
-
-  Serial.print("SP: "); Serial.print(setpoint);
-  Serial.print("\tOmega: "); Serial.print(omega_z);
-  Serial.print("\tAng: "); Serial.print(theta_z);
-  //Serial.print("\tE: "); Serial.print(error);
-  //Serial.print("\tEd: "); Serial.print(d_error);
 
   if((!END)&&(micros() - startTime >= 1000000*timeToStart)) controlEnable = true; //Enable control after 2 seconds
 

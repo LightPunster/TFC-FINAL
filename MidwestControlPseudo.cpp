@@ -1,19 +1,5 @@
-//This = from most recent reading
-//Last = from the reading before the most recent one
-
-
-
-
-//Global Variables
-#define last_error, integral_error
-#define error, omega_reading, cw_pwm_Duty, ccw_pwm_Duty, setpoint;
-#define Kp_actuate, Kp_hold, Kd_actuate, Kd_hold, Ki_actuate, Ki_hold
-#define pwm_Limit_actuate, pwm_Limit_hold
-
-//Other variables (derivative error, pwm_Duty, inst_avg_error)can be local
 
 void setup() {
-	//blah blah blah, wait til 2 seconds after burn-out
 
 	last_time = micros()/1000000; last_error = 0; integral_error = 0;
 	[error,integral_error,omega_reading] = imu_read(); //global variables set here, do not need to be returns
@@ -35,14 +21,7 @@ void loop() {
 		periodStart = micros();
 	}
 
-void imu_read() {
-	this_time = micros()/1000000;
-	error = setpoint – this_angle_reading;					//Calculate current error
-	inst_avg_error = (error + last_error)/2;
-	integral_error += inst_avg_error*(this_time - last_time);			//Calculate integral error
-	last_error = error;
-	last_time = this_time;
-}
+
 
 void Actuate() {
 

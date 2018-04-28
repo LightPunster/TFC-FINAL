@@ -1,17 +1,45 @@
 #include "IMU.h"
 
+void imu_get_data() {
+    imu_sensor.accelUpdate();
+    imu_data.aX = imu_sensor.accelX();
+    imu_data.aY = imu_sensor.accelY();
+    imu_data.aZ = imu_sensor.accelZ();
+    imu_data.aSqrt = imu_sensor.accelSqrt();
 
+    imu_sensor.gyroUpdate();
+    imu_data.gX = imu_sensor.gyroX();
+    imu_data.gY = imu_sensor.gyroY();
+    imu_data.gZ = imu_sensor.gyroZ();
+
+    imu_sensor.magUpdate();
+    imu_data.mX = imu_sensor.magX();
+    imu_data.mY = imu_sensor.magY();
+    imu_data.mZ = imu_sensor.magZ();
+    imu_data.mDirection = imu_sensor.magHorizDirection();
+
+
+    imu_data.omega_z = imu_data.gZ + omega_z_BiasCorrection;
+    imu_data.theta_z += ((imu_data.this_time - imu_data.last_time)/1000000.0) * (imu_data.omega_z + imu_data.omega_z_0)/2;
+    imu_data.omega_z_0 = imu_data.omega_z;
+    imu_data.last_time = imu_data.this_time;
+
+    if(imu_data.theta_z>(commands[current_command].setpoint+180)) imu_data.theta_z-=360; //Ensures that error never exceed +-180
+    if(imu_data.theta_z<(commands[current_command].setpoint-180)) imu_data.theta_z+=360;
+
+    imu_data.error = commands[current_command].setpoint - imu_data.theta_z;
+    imu_data.d_error = -imu_data.omega_z;
+
+    /*imu_data.this_time = micros()/1000000;
+    imu_data.error = commands[current_command]setpoint – this_angle_reading;					//Calculate current error
+    imu_data.inst_avg_error = (imu_data.error + imu_data.last_error)/2;
+    imu_data.integral_error += imu_data.inst_avg_error*(imu_data.this_time - imu_data.last_time);			//Calculate integral error
+    imu_data.last_error = imu_data.error;
+    imu_data.last_time = imu_data.this_time;*/
+}
 void test () {
-    /*imu.update(UPDATE_ACCEL|UPDATE_GYRO); t_sample = micros();
-    float omega_z = imu.calcGyro(imu.gz) + omega_z_BiasCorrection;
-    float theta_z += ((t_sample - t_last)/1000000.0)*(omega_z + omega_z_0)/2;
-    float omega_z_0 = omega_z; t_last = t_sample;
+    /*imu.update(UPDATE_ACCEL|UPDATE_GYRO); imu_data.this_time = micros();
 
-    if(theta_z>(setpoint+180)) theta_z-=360; //Ensures that error never exceed +-180
-    if(theta_z<(setpoint-180)) theta_z+=360;
-
-    float error = setpoint - theta_z;
-    float d_error = -omega_z;
 
     Serial.print("SP: "); Serial.print(setpoint);
     Serial.print("\tOmega: "); Serial.print(omega_z);
@@ -52,39 +80,6 @@ void imu_sensor_setup() {
     imu_data.mY = imu_sensor.magY();
     imu_data.mZ = imu_sensor.magZ();
     imu_data.mDirection = imu_sensor.magHorizDirection();
-    /*Serial.println("sensorId: " + String(sensorId));
-
-    imu_sensor.accelUpdate();
-    imu_data.aX = imu_sensor.accelX();
-    imu_data.aY = imu_sensor.accelY();
-    imu_data.aZ = imu_sensor.accelZ();
-    imu_data.aSqrt = imu_sensor.accelSqrt();
-    Serial.println("accelX: " + String(imu_data.aX));
-    Serial.println("accelY: " + String(imu_data.aY));
-    Serial.println("accelZ: " + String(imu_data.aZ));
-    Serial.println("accelSqrt: " + String(imu_data.aSqrt));
-
-    imu_sensor.gyroUpdate();
-    imu_data.gX = imu_sensor.gyroX();
-    imu_data.gY = imu_sensor.gyroY();
-    imu_data.gZ = imu_sensor.gyroZ();
-    Serial.println("gyroX: " + String(imu_data.gX));
-    Serial.println("gyroY: " + String(imu_data.gY));
-    Serial.println("gyroZ: " + String(imu_data.gZ));
-
-    imu_sensor.magUpdate();
-    imu_data.mX = imu_sensor.magX();
-    imu_data.mY = imu_sensor.magY();
-    imu_data.mZ = imu_sensor.magZ();
-    imu_data.mDirection = imu_sensor.magHorizDirection();
-    Serial.println("magX: " + String(imu_data.mX));
-    Serial.println("maxY: " + String(imu_data.mY));
-    Serial.println("magZ: " + String(imu_data.mZ));
-    Serial.println("horizontal direction: " + String(imu_data.mDirection));
-
-    Serial.println("at " + String(millis()) + "ms");
-    Serial.println(""); // Add an empty line
-    delay(500);*/
 }
 
 
