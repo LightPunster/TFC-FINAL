@@ -24,7 +24,7 @@ struct imu {
     float mX;
     float mY;
     float mZ;
-
+    float velocity;
     float omega_z;
     float omega_z_0;
     float theta_z;
