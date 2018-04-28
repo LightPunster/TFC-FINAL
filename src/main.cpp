@@ -6,8 +6,10 @@ int current_command = 0;
 struct bmp_data bmp;
 
 #include <IMU.h>
-MPU9250_DMP imu_sensor;
+MPU9250 imu_sensor;
+struct imu imu_data;
 
+#include <Serial.h>
 
 void declarations();
 
@@ -17,8 +19,9 @@ void setup() {
     declarations();  //found in other
 }
 
+
 void loop() {
-    // put your main code here, to run repeatedly:
+
 }
 
 
@@ -34,19 +37,22 @@ void declarations() {
     //TFR.begin(2000000);    //increase the baud rate, check math
 
 
-    // Call imu.begin() to verify communication and initialize
-    if (imu.begin() != INV_SUCCESS)
-    {
-      while (1)
-      {
-        SerialPort.println("Unable to communicate with MPU-9250");
-        SerialPort.println("Check connections, and try again.");
-        SerialPort.println();
-        delay(1000);
-      }
-    }
-    imu.dmpBegin(DMP_FEATURE_ANDROID_ORIENT);
-    imu.dmpSetOrientation(orientationMatrix);
+    #ifdef _ESP32_HAL_I2C_H_ // For ESP32
+      Wire.begin(SDA_PIN, SCL_PIN); // SDA, SCL
+    #else
+      Wire.begin();
+    #endif
+    imu_sensor.setWire(&Wire);
+    imu_sensor.beginAccel();
+    imu_sensor.beginGyro();
+    imu_sensor.beginMag();
+    // You can set your own offset for mag values
+    // imu_sensor.magXOffset = -50;
+    // imu_sensor.magYOffset = -55;
+    // imu_sensor.magZOffset = -10;
+    sensorId = imu_sensor.readId();
+    imu_sensor_setup();
+
 
     bmp180.begin();
     bmpSetup();

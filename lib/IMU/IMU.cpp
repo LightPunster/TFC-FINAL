@@ -19,65 +19,39 @@ void test () {
 }
 
 void imu_sensor_setup() {
-    Wire.begin();
-    // Read the WHO_AM_I register, this is a good test of communication
-    byte c = myIMU.readByte(MPU9250_ADDRESS, WHO_AM_I_MPU9250);
-    Serial.print("MPU9250 "); Serial.print("I AM "); Serial.print(c, HEX);
-    Serial.print(" I should be "); Serial.println(0x71, HEX);
+    /*Serial.println("sensorId: " + String(sensorId));
 
-    if (c == 0x71) // WHO_AM_I should always be 0x68
-    {
-      Serial.println("MPU9250 is online...");
+    imu_sensor.accelUpdate();
+    imu_data.aX = imu_sensor.accelX();
+    imu_data.aY = imu_sensor.accelY();
+    imu_data.aZ = imu_sensor.accelZ();
+    imu_data.aSqrt = imu_sensor.accelSqrt();
+    Serial.println("accelX: " + String(imu_data.aX));
+    Serial.println("accelY: " + String(imu_data.aY));
+    Serial.println("accelZ: " + String(imu_data.aZ));
+    Serial.println("accelSqrt: " + String(imu_data.aSqrt));
 
-      // Start by performing self test and reporting values
-      myIMU.MPU9250SelfTest(myIMU.SelfTest);
-      Serial.print("x-axis self test: acceleration trim within : ");
-      Serial.print(myIMU.SelfTest[0],1); Serial.println("% of factory value");
-      Serial.print("y-axis self test: acceleration trim within : ");
-      Serial.print(myIMU.SelfTest[1],1); Serial.println("% of factory value");
-      Serial.print("z-axis self test: acceleration trim within : ");
-      Serial.print(myIMU.SelfTest[2],1); Serial.println("% of factory value");
-      Serial.print("x-axis self test: gyration trim within : ");
-      Serial.print(myIMU.SelfTest[3],1); Serial.println("% of factory value");
-      Serial.print("y-axis self test: gyration trim within : ");
-      Serial.print(myIMU.SelfTest[4],1); Serial.println("% of factory value");
-      Serial.print("z-axis self test: gyration trim within : ");
-      Serial.print(myIMU.SelfTest[5],1); Serial.println("% of factory value");
+    imu_sensor.gyroUpdate();
+    imu_data.gX = imu_sensor.gyroX();
+    imu_data.gY = imu_sensor.gyroY();
+    imu_data.gZ = imu_sensor.gyroZ();
+    Serial.println("gyroX: " + String(imu_data.gX));
+    Serial.println("gyroY: " + String(imu_data.gY));
+    Serial.println("gyroZ: " + String(imu_data.gZ));
 
-      // Calibrate gyro and accelerometers, load biases in bias registers
-      myIMU.calibrateMPU9250(myIMU.gyroBias, myIMU.accelBias);
+    imu_sensor.magUpdate();
+    imu_data.mX = imu_sensor.magX();
+    imu_data.mY = imu_sensor.magY();
+    imu_data.mZ = imu_sensor.magZ();
+    imu_data.mDirection = imu_sensor.magHorizDirection();
+    Serial.println("magX: " + String(imu_data.mX));
+    Serial.println("maxY: " + String(imu_data.mY));
+    Serial.println("magZ: " + String(imu_data.mZ));
+    Serial.println("horizontal direction: " + String(imu_data.mDirection));
 
-      myIMU.initMPU9250();
-      // Initialize device for active mode read of acclerometer, gyroscope, and
-      // temperature
-      Serial.println("MPU9250 initialized for active data mode....");
-
-      // Read the WHO_AM_I register of the magnetometer, this is a good test of
-      // communication
-      byte d = myIMU.readByte(AK8963_ADDRESS, WHO_AM_I_AK8963);
-      Serial.print("AK8963 "); Serial.print("I AM "); Serial.print(d, HEX);
-      Serial.print(" I should be "); Serial.println(0x48, HEX);
-
-      // Get magnetometer calibration from AK8963 ROM
-      myIMU.initAK8963(myIMU.magCalibration);
-      // Initialize device for active mode read of magnetometer
-      Serial.println("AK8963 initialized for active data mode....");
-      if (SerialDebug)
-      {
-        //  Serial.println("Calibration values: ");
-        Serial.print("X-Axis sensitivity adjustment value ");
-        Serial.println(myIMU.magCalibration[0], 2);
-        Serial.print("Y-Axis sensitivity adjustment value ");
-        Serial.println(myIMU.magCalibration[1], 2);
-        Serial.print("Z-Axis sensitivity adjustment value ");
-        Serial.println(myIMU.magCalibration[2], 2);
-      } else
-        {
-          Serial.print("Could not connect to MPU9250: 0x");
-          Serial.println(c, HEX);
-          while(1) ; // Loop forever if communication doesn't happen
-        }
-      }
+    Serial.println("at " + String(millis()) + "ms");
+    Serial.println(""); // Add an empty line
+    delay(500);*/
 }
 
 

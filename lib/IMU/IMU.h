@@ -2,15 +2,34 @@
 #define _IMU_H_
 
 #include "Global.h"
-//#include <MPU9250_RegisterMap.h>
 #include <math.h>
-#include <MPU9250.h>
-#include <quaternionFilters.h>
-//#include <MPU9250DMP.h>
-//extern MPU9250_DMP imu;
-extern MPU9250_DMP imu_sensor;
+#include <MPU9250_asukiaaa.h>
 
-void test();
+#ifdef _ESP32_HAL_I2C_H_
+#define SDA_PIN 26
+#define SCL_PIN 25
+#endif
+extern MPU9250 imu_sensor;
+
+
+static uint8_t sensorId; //fix this later
+
+struct imu {
+    float aX;
+    float aY;
+    float aZ;
+    float aSqrt;
+    float gX;
+    float gY;
+    float gZ;
+    float mDirection;
+    float mX;
+    float mY;
+    float mZ;
+};
+extern struct imu imu_data;
+
+void imu_sensor_setup();
 
 /*#include <Wire.h>
 #include <EEPROM.h>

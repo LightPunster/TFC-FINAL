@@ -1,5 +1,12 @@
 #include "Serial.h"
 
+
+
+void serialPrint(elapsedMillis current_time, elapsedMillis global_time) {
+
+
+    
+}
 /*
     Serial.print("STATUS: ");
     int temp2 = ((status.TFC_1_connected) + (status.TFC_2_connected*2) + (status.TFC_3_connected*4));
