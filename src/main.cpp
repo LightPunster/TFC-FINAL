@@ -37,22 +37,6 @@ void declarations() {
     //TFR.begin(2000000);    //increase the baud rate, check math
 
 
-    #ifdef _ESP32_HAL_I2C_H_ // For ESP32
-      Wire.begin(SDA_PIN, SCL_PIN); // SDA, SCL
-    #else
-      Wire.begin();
-    #endif
-    imu_sensor.setWire(&Wire);
-    imu_sensor.beginAccel();
-    imu_sensor.beginGyro();
-    imu_sensor.beginMag();
-    // You can set your own offset for mag values
-    // imu_sensor.magXOffset = -50;
-    // imu_sensor.magYOffset = -55;
-    // imu_sensor.magZOffset = -10;
-    sensorId = imu_sensor.readId();
-    imu_sensor_setup();
-
 
     bmp180.begin();
     bmpSetup();

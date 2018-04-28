@@ -12,8 +12,6 @@
 extern MPU9250 imu_sensor;
 
 
-static uint8_t sensorId; //fix this later
-
 struct imu {
     float aX;
     float aY;

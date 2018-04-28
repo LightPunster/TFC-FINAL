@@ -19,6 +19,39 @@ void test () {
 }
 
 void imu_sensor_setup() {
+
+    #ifdef _ESP32_HAL_I2C_H_ // For ESP32
+      Wire.begin(SDA_PIN, SCL_PIN); // SDA, SCL
+    #else
+      Wire.begin();
+    #endif
+    imu_sensor.setWire(&Wire);
+    imu_sensor.beginAccel();
+    imu_sensor.beginGyro();
+    imu_sensor.beginMag();
+    // You can set your own offset for mag values
+    // imu_sensor.magXOffset = -50;
+    // imu_sensor.magYOffset = -55;
+    // imu_sensor.magZOffset = -10;
+    uint8_t sensorId = imu_sensor.readId();
+
+    Serial.println("sensorId: " + String(sensorId));
+    imu_sensor.accelUpdate();
+    imu_data.aX = imu_sensor.accelX();
+    imu_data.aY = imu_sensor.accelY();
+    imu_data.aZ = imu_sensor.accelZ();
+    imu_data.aSqrt = imu_sensor.accelSqrt();
+
+    imu_sensor.gyroUpdate();
+    imu_data.gX = imu_sensor.gyroX();
+    imu_data.gY = imu_sensor.gyroY();
+    imu_data.gZ = imu_sensor.gyroZ();
+
+    imu_sensor.magUpdate();
+    imu_data.mX = imu_sensor.magX();
+    imu_data.mY = imu_sensor.magY();
+    imu_data.mZ = imu_sensor.magZ();
+    imu_data.mDirection = imu_sensor.magHorizDirection();
     /*Serial.println("sensorId: " + String(sensorId));
 
     imu_sensor.accelUpdate();
