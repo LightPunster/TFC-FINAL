@@ -17,8 +17,6 @@ bool controlEnable = false;
 bool END = false;
 int timeToStart = 3;
 
-MPU9250_DMP imu;
-
 void setup() {
   pinMode(cw_pin,OUTPUT);
   pinMode(ccw_pin,OUTPUT);
@@ -30,14 +28,7 @@ void setup() {
   digitalWrite(dump_pin,LOW);
 
   Serial.begin(9600);
-
-
-
-  imu.setSensors(INV_XYZ_GYRO);
-  imu.setGyroFSR(250);
-  imu.setAccelFSR(16);
-  imu.setLPF(5);
-  imu.setSampleRate(100);
+   
   t_last = micros(); omega_z = 0; theta_z = 0;
   startTime = micros();
   duty = 0;

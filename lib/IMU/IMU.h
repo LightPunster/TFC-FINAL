@@ -2,8 +2,10 @@
 #define _IMU_H_
 
 #include "Global.h"
-#include <SparkFunMPU9250-DMP.h> //Library for gyroscope
+//#include <MPU9250_RegisterMap.h>
+#include <SparkFunMPU9250-DMP.h>
 #include <math.h>
+extern MPU9250_DMP imu;
 
 void test();
 
@@ -11,9 +13,6 @@ void test();
 #include <EEPROM.h>
 #include <NXPMotionSense.h>
 #include <Adafruit_MPL3115A2.h>
-
-extern NXPMotionSense imu_sensor;
-extern NXPSensorFusion filter;
 
 
 struct IMU_data {

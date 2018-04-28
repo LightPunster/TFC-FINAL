@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "Global.h"
 struct command commands[MAX_NUM_COMMANDS];
 int current_command = 0;
@@ -8,8 +6,7 @@ int current_command = 0;
 struct bmp_data bmp;
 
 #include <IMU.h>
-//NXPMotionSense imu_sensor;
-//NXPSensorFusion filter;
+MPU9250_DMP imu_sensor;
 //IMU_data imu;
 
 
@@ -27,7 +24,7 @@ void loop() {
 
 
 void declarations() {
-    Serial.begin(500000);
+    Serial.begin(2000000); //the fastest "safest" baud rate Teensy 3.6 can handle according to documentation
 
     /*pinMode(SD_chipSelect, OUTPUT);
     if(!SD.begin(SD_chipSelect)) {
@@ -35,15 +32,18 @@ void declarations() {
     }
     sd_setup();*/
 
-    //TFR.begin(500000);    //increase the baud rate, check math
+    //TFR.begin(2000000);    //increase the baud rate, check math
 
     //while (imu.begin() != INV_SUCCESS) {
     //  Serial.println("IMU error");
     //  delay(100);
     //}
 
-    //imu_sensor.begin();
-    //filter.begin(100);
+    imu_sensor.setSensors(INV_XYZ_GYRO);
+    imu_sensor.setGyroFSR(250);
+    imu_sensor.setAccelFSR(16);
+    imu_sensor.setLPF(5);
+    imu_sensor.setSampleRate(100);
     bmp180.begin();
     bmpSetup();
 
