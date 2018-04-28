@@ -1,6 +1,18 @@
 #include <Arduino.h>
 
+#include "Global.h"
+struct command commands[MAX_NUM_COMMANDS];
+int current_command = 0;
+
 #include <BMP085.h>
+struct bmp_data bmp;
+
+#include <IMU.h>
+//NXPMotionSense imu_sensor;
+//NXPSensorFusion filter;
+//IMU_data imu;
+
+
 
 void setup() {
     // put your setup code here, to run once:
@@ -10,20 +22,12 @@ void loop() {
     // put your main code here, to run repeatedly:
 }
 
+
+
+
+
 /*
-#include "Global.h"
-struct command commands[MAX_NUM_COMMANDS];
-int current_command = 0;
-
-#include <BMP085.h>
-struct bmp_data bmp;
-
 #include <Control.h>
-
-#include <IMU.h>
-NXPMotionSense imu_sensor;
-NXPSensorFusion filter;
-IMU_data imu;
 
 //#include <Other.h>
 
