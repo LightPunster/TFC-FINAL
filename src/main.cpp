@@ -6,8 +6,7 @@ int current_command = 0;
 struct bmp_data bmp;
 
 #include <IMU.h>
-//MPU9250_DMP imu_sensor;
-//IMU_data imu;
+MPU9250_DMP imu;
 
 
 void declarations();
@@ -34,10 +33,20 @@ void declarations() {
 
     //TFR.begin(2000000);    //increase the baud rate, check math
 
-    //while (imu.begin() != INV_SUCCESS) {
-    //  Serial.println("IMU error");
-    //  delay(100);
-    //}
+
+    // Call imu.begin() to verify communication and initialize
+    if (imu.begin() != INV_SUCCESS)
+    {
+      while (1)
+      {
+        SerialPort.println("Unable to communicate with MPU-9250");
+        SerialPort.println("Check connections, and try again.");
+        SerialPort.println();
+        delay(1000);
+      }
+    }
+    imu.dmpBegin(DMP_FEATURE_ANDROID_ORIENT);
+    imu.dmpSetOrientation(orientationMatrix);
 
     bmp180.begin();
     bmpSetup();

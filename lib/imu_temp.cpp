@@ -24,8 +24,6 @@ Supported Platforms:
 
 #define SerialPort SerialUSB
 
-MPU9250_DMP imu;
-
 unsigned long stepCount = 0;
 unsigned long stepTime = 0;
 unsigned long lastStepCount = 0;
@@ -37,25 +35,6 @@ const signed char orientationMatrix[9] = {
 };
 unsigned char lastOrient = 0;
 
-void setup()
-{
-  SerialPort.begin(115200);
-
-  // Call imu.begin() to verify communication and initialize
-  if (imu.begin() != INV_SUCCESS)
-  {
-    while (1)
-    {
-      SerialPort.println("Unable to communicate with MPU-9250");
-      SerialPort.println("Check connections, and try again.");
-      SerialPort.println();
-      delay(5000);
-    }
-  }
-
-  imu.dmpBegin(DMP_FEATURE_ANDROID_ORIENT);
-  imu.dmpSetOrientation(orientationMatrix);
-}
 
 void loop()
 {
