@@ -3,9 +3,12 @@
 
 #include "Global.h"
 //#include <MPU9250_RegisterMap.h>
-//#include <MPU9250DMP.h>
 #include <math.h>
+#include <MPU9250.h>
+#include <quaternionFilters.h>
+//#include <MPU9250DMP.h>
 //extern MPU9250_DMP imu;
+extern MPU9250_DMP imu_sensor;
 
 void test();
 
