@@ -2,7 +2,7 @@
 #define Teensy_BMP180_h
 
 #include "Wire.h"
-
+#include "BMP085.h"
 
 class Teensy_BMP180
 {
@@ -20,7 +20,7 @@ class Teensy_BMP180
 			// command BMP180 to start a temperature measurement
 			// returns (number of ms to wait) for success, 0 for fail
 
-		char getTemperature(double &T);
+		char getTemperature(void);
 			// return temperature measurement from previous startTemperature command
 			// places returned value in T variable (deg C)
 			// returns 1 for success, 0 for fail
@@ -30,13 +30,13 @@ class Teensy_BMP180
 			// oversampling: 0 - 3 for oversampling value
 			// returns (number of ms to wait) for success, 0 for fail
 
-		char getPressure(double &P, double &T);
+		char getPressure(void);
 			// return absolute pressure measurement from previous startPressure command
 			// note: requires previous temperature measurement in variable T
 			// places returned value in P variable (mbar)
 			// returns 1 for success, 0 for fail
 
-		double altitude(double P, double P0);
+		double altitude();
 			// convert absolute pressure to altitude (given baseline pressure; sea-level, runway, etc.)
 			// P: absolute pressure (mbar)
 			// P0: fixed baseline pressure (mbar)
